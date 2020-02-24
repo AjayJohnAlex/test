@@ -10,7 +10,6 @@ itsdangerous==1.1.0
 Jinja2==2.11.1
 MarkupSafe==1.1.1
 psycopg2==2.8.4
-python==3.7.6
 requests==2.23.0
 starlette==0.12.9
 urllib3==1.25.8
