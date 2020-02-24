@@ -1,1 +1,1 @@
-uvicorn app:app -- reload
+web: gunicorn example:app -w 4 -k uvicorn.workers.UvicornWorker
