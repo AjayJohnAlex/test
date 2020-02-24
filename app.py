@@ -42,8 +42,6 @@ async def get_location(latitude_v: float, longitude_v: float):
         input_data = (latitude_v, longitude_v)
         cur.execute(query, input_data)
         data = cur.fetchall()
-        con.commit()
-
         cur.close()
 
         return {"pincode": data[0], "address:": data[1], "city:": data[2]}

@@ -1,3 +1,4 @@
 {
+  "TestCases/test_getLocation.py": true, 
   "TestCases/test_get_location.py": true
 }
