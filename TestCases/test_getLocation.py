@@ -11,7 +11,8 @@ def test_getlocation():
     repsonse = requests.get(get_url)
     res = repsonse.content
 
-    assert res == b'{"pincode":"IN/110001","address:":"Connaught Place","city:":"New Delhi"}'
+    assert res.json() == {"pincode": "IN/110001",
+                          "address:": "Connaught Place", "city:": "New Delhi"}
     assert repsonse.status_code == 200
 
 
