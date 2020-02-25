@@ -7,8 +7,6 @@ import sys
 
 app = FastAPI(debug=True)
 
-print(sys.version)
-
 con = psycopg2.connect(
     host="localhost",
     database="test",
@@ -62,6 +60,11 @@ async def post_location(item: Item):
     con.commit()
     cur.close()
     return "Query Executed"
+
+
+@app.post('get_using_postgres/')
+async def get_using_postgres(item: Item):
+    query = "select pincode, earth_distrance( ll_to_earth(a.latitude,a.longitude) as distance from Public.location a where latitude = (%s) and longitude(%s) order by diatnace desc ;"
 
 
 if __name__ == "main":
