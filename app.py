@@ -42,7 +42,7 @@ async def get_location(latitude_v: float, longitude_v: float):
         data = cur.fetchall()
         cur.close()
 
-        return {"pincode": data[0], "address:": data[1], "city:": data[2]}
+        return {"Details:": data}
 
     except psycopg2.DatabaseError as error:
         print(error)
@@ -62,9 +62,28 @@ async def post_location(item: Item):
     return "Query Executed"
 
 
-@app.post('get_using_postgres/')
-async def get_using_postgres(item: Item):
-    query = "select pincode, earth_distrance( ll_to_earth(a.latitude,a.longitude) as distance from Public.location a where latitude = (%s) and longitude(%s) order by diatnace desc ;"
+@app.get('/get_using_postgres/{latitude_v}/{longitude_v}')
+async def get_using_postgres(latitude_v: float, longitude_v: float):
+
+    cur = con.cursor()
+
+    query = '''select key from location a,
+                lateral (
+                  select place_name,latitude, longitude from location where latitude = (%s) and longitude = (%s)
+                        ) as hr_jax
+                where a.place_name <> hr_jax.place_name and
+                earth_distance(
+                        ll_to_earth(a.latitude, a.longitude),
+                        ll_to_earth(hr_jax.latitude, hr_jax.longitude)
+                                )/1000 < 5
+                order by key;'''
+
+    input_data = (latitude_v, longitude_v)
+    cur.execute(query, input_data)
+    data = cur.fetchall()
+    cur.close()
+
+    return {"Pincodes within the radius of 5 KM:": data}
 
 
 if __name__ == "main":

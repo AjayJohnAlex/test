@@ -6,10 +6,17 @@ client = TestClient(app)
 
 
 def test_getlocation():
-    response = client.get("/post_location/")
+    response = client.get("/post_location/28.6333/77.2167")
     assert response.status_code == 200
-    assert response.json() == {"pincode": ["IN/144101", "Patara", "Punjab"], "address:": [
-        "IN/144102", "Adampur Doaba", "Punjab"], "city:": ["IN/144103", "Adampur A D", "Punjab"]}
+    assert response.json() == {
+        "Details:": [
+            [
+                "IN/110001",
+                "Connaught Place",
+                "New Delhi"
+            ]
+        ]
+    }
 
 
 def test_postlocation():
@@ -23,3 +30,18 @@ def test_postlocation():
     )
     assert response.status_code == 200
     assert response.json() == "Query Executed"
+
+
+def test_getUsingPostgres():
+    response = client.get("/post_location/25.5/94.1333")
+    assert response.status_code == 200
+    assert response.json() == {
+        "Pincodes within the radius of 5 KM:": [
+            ["IN/795150"],
+            ["IN/795150"],
+            ["IN/795151"],
+            ["IN/795151"],
+            ["IN/795158"],
+            ["IN/795158"]
+        ]
+    }
