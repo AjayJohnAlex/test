@@ -73,16 +73,19 @@ async def get_using_postgres(latitude_v: float, longitude_v: float):
 
     cur = con.cursor()
 
-    query = '''select distinct(key) from location a,
-                lateral (
-                  select place_name,latitude, longitude from location where latitude = 25.5 and longitude = 94.1333
-                        ) as hr_jax
-                where a.place_name = hr_jax.place_name and
-                earth_distance(
-                        ll_to_earth(a.latitude, a.longitude),
-                        ll_to_earth(hr_jax.latitude, hr_jax.longitude)
-                                )/1000 < 5
-                order by key;'''
+    query = '''select key from ( 
+                       select key, earth_distance(
+                           ll_to_earth(a.latitude, a.longitude),
+                           ll_to_earth(p.latpoint, p.longpoint)
+                           ) / 1000 as distance
+                from location a
+                join (   /* these are the query parameters */
+                         select  (%s)  AS latpoint,  (%s)AS longpoint
+                      ) AS p ON 1=1
+    
+                ) as s
+                where distance <= 5
+                order by distance;'''
 
     input_data = (latitude_v, longitude_v)
     cur.execute(query, input_data)
@@ -105,7 +108,7 @@ async def get_using_self(latitude_v: float, longitude_v: float):
          * COS(RADIANS(p.longpoint - z.longitude)) + SIN(RADIANS(p.latpoint)) * SIN(RADIANS(z.latitude))))) AS distance
     from location AS z
     join (   /* these are the query parameters */
-        select  25.5  AS latpoint,  94.1333 AS longpoint,
+        select  (%s) AS latpoint,  (%s) AS longpoint,
                 5 AS radius,      111.045 AS distance_unit
         ) AS p ON 1=1
     where z.latitude
@@ -114,7 +117,7 @@ async def get_using_self(latitude_v: float, longitude_v: float):
     and z.longitude
         between p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
             and p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-) as s
+     ) as s
     where distance <= 5
     order by distance
  '''
