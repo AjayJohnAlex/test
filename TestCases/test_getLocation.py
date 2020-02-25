@@ -35,6 +35,8 @@ def test_postlocation():
     assert response.status_code == 200
     assert response.json() == "Query Executed"
 
+# Checking the results of using the different methods have been done through requests response data.
+
 # Get api - / get_using_postgres using postgres "earthdistance" to compute all points in 5km radius
 
 
