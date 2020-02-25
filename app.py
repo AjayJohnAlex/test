@@ -91,6 +91,8 @@ async def get_using_postgres(latitude_v: float, longitude_v: float):
 
     return {"Pincodes within the radius of 5 KM:": data}
 
+# Get api - / get_using_self :/get_using_self - Implement the mathematical computation yourself
+
 
 @app.get('/get_using_self/{latitude_v}/{longitude_v}')
 async def get_using_self(latitude_v: float, longitude_v: float):

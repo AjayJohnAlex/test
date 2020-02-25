@@ -36,10 +36,20 @@ def test_postlocation():
     assert response.json() == "Query Executed"
 
 # Get api - / get_using_postgres using postgres "earthdistance" to compute all points in 5km radius
-
-
 def test_getUsingPostgres():
     response = client.get("/get_using_postgres/25.5/94.1333")
+    assert response.status_code == 200
+    assert response.json() == {
+        "Pincodes within the radius of 5 KM:": [
+            ["IN/795150"],
+            ["IN/795151"],
+            ["IN/795158"]
+        ]
+    }
+
+# Get api - / get_using_self :/get_using_self - Implement the mathematical computation yourself
+def test_getUsingSelf():
+    response = client.get("/get_using_self/25.5/94.1333")
     assert response.status_code == 200
     assert response.json() == {
         "Pincodes within the radius of 5 KM:": [
